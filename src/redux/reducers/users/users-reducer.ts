@@ -1,5 +1,12 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {AnyAction, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import axios from 'axios';
+import {RootState} from '../../store';
 
+type DataType = {
+    error: null | string
+    items: Array<UsersTestType>
+    totalCount: number
+}
 type PhotosType = {
     small: null | string
     large: null | string
@@ -17,7 +24,8 @@ const initialState = {
     users: [] as Array<UsersTestType>,
     pageSize: 5,
     usersCount: 0,
-    currentPage: 1
+    currentPage: 1,
+    error: ''
 }
 
 const usersSlice = createSlice({
@@ -30,17 +38,42 @@ const usersSlice = createSlice({
                     ? {...u, followed: !(state.users.find(el => el.id === action.payload)?.followed)}
                     : u);
         },
-        setUsers: (state: UsersPageType, action: PayloadAction<Array<UsersTestType>>) => {
-            state.users = [...action.payload];
-        },
         changeCurrentPage: (state: UsersPageType, action: PayloadAction<number>) => {
             state.currentPage = action.payload;
-        },
-        setTotalCount: (state: UsersPageType, action: PayloadAction<number>) => {
-            state.usersCount = action.payload;
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(getUsers.fulfilled, (state, action) => {
+                state.users = action.payload.items;
+                state.usersCount = action.payload.totalCount;
+            })
+            .addMatcher(isError, (state, action: PayloadAction<string>) => {
+               state.error = action.payload;
+            })
     }
 });
 
+const isError = (action: AnyAction) => {
+    return action.type.endsWith('rejected')
+}
+
+export const getUsers = createAsyncThunk<DataType, void, { rejectValue: string }>(
+    'users/getUsers',
+    async (_, {rejectWithValue, getState}) => {
+
+        const state = getState() as RootState;
+        const {pageSize, currentPage} = state.users;
+
+        const response = await axios.get(`https://social-network.samuraijs.com/api/1.0/users?count=${pageSize}&page=${currentPage}`);
+
+        if (response.status !== 200) {
+            return rejectWithValue('Can\'t get tasks. Server error');
+        }
+
+        return response.data as DataType;
+    }
+)
+
 export default usersSlice.reducer;
-export const {changeFollowed, changeCurrentPage, setUsers, setTotalCount} = usersSlice.actions;
+export const {changeFollowed, changeCurrentPage} = usersSlice.actions;

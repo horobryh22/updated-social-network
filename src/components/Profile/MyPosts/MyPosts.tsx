@@ -1,13 +1,13 @@
 import React, {ChangeEvent} from 'react';
 import classes from './MyPosts.module.css';
 import {Post} from './Post/Post';
-import {useAppDispatch, useTypedSelector} from '../../../redux/store';
 import {addPost, changeValueTextareaPost} from '../../../redux/reducers/profile/profile-reducer';
+import {useAppDispatch, useTypedSelector} from '../../../redux/hooks/hooks';
 
 export const MyPosts: React.FC = React.memo(() => {
 
     const dispatch = useAppDispatch();
-    const {posts, postText} = useTypedSelector(state => state.profilePage)
+    const {posts, postText} = useTypedSelector(state => state.profile)
 
     const mappedPosts = posts?.map(p => <Post key={p.id} post={p.post} likes={p.likes} id={p.id}/>);
 

@@ -2,14 +2,14 @@ import React, {ChangeEvent} from 'react';
 import classes from './Dialogs.module.css';
 import {DialogItem} from './DialogItem/DialogItem';
 import {Message} from './Message/Message';
-import {useAppDispatch, useTypedSelector} from '../../redux/store';
 import {changeValueTextareaMessage, sendMessage} from '../../redux/reducers/dialogs/dialogs-reducer';
+import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 
 export const Dialogs: React.FC = React.memo(() => {
 
     const dispatch = useAppDispatch();
-    const {dialogs, messages} = useTypedSelector(state => state.dialogsPage);
-    const textareaValue = useTypedSelector(state => state.dialogsPage.messageText);
+    const {dialogs, messages} = useTypedSelector(state => state.dialogs);
+    const textareaValue = useTypedSelector(state => state.dialogs.messageText);
 
     const mappedDialogs = dialogs.map(d => <DialogItem key={d.id} name={d.name} id={d.id} avatar={d.avatar}/>);
     const mappedMessages = messages.map(m => <Message key={m.id} message={m.message} id={m.id}/>);

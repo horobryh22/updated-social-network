@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './Navbar.module.css';
 import {NavLink} from 'react-router-dom';
-import {useTypedSelector} from '../../redux/store';
+import {useTypedSelector} from '../../redux/hooks/hooks';
 
 
 export const Navbar: React.FC = React.memo(() => {

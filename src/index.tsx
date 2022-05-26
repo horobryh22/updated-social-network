@@ -6,18 +6,12 @@ import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
 import {store} from './redux/store';
 
-export const rerenderEntireTree = () => {
-    ReactDOM.render(
-        <BrowserRouter>
-            <Provider store={store}>
-                <App/>,
-            </Provider>
-        </BrowserRouter>
-        ,
-        document.getElementById('root')
-    );
-}
-
-store.subscribe(rerenderEntireTree)
-rerenderEntireTree();
-
+ReactDOM.render(
+    <BrowserRouter>
+        <Provider store={store}>
+            <App/>,
+        </Provider>
+    </BrowserRouter>
+    ,
+    document.getElementById('root')
+);
