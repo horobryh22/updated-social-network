@@ -1,35 +1,37 @@
 import React, {ChangeEvent} from 'react';
 import classes from './MyPosts.module.css';
-import {Post, PostType} from './Post/Post';
-import {MapDispatchPropsType, MapStatePropsType} from './MyPostsContainer';
+import {Post} from './Post/Post';
+import {useAppDispatch, useTypedSelector} from '../../../redux/store';
+import {addPost, changeValueTextareaPost} from '../../../redux/reducers/profile/profile-reducer';
 
-type MyPostsPropsType = MapStatePropsType & MapDispatchPropsType;
+export const MyPosts: React.FC = React.memo(() => {
 
-export const MyPosts: React.FC<MyPostsPropsType> = ({profilePage, addPost, changeValuePost}) => {
+    const dispatch = useAppDispatch();
+    const {posts, postText} = useTypedSelector(state => state.profilePage)
 
-    const posts = profilePage.posts?.map(p => <Post key={p.id} post={p.post} likes={p.likes} id={p.id}/>);
+    const mappedPosts = posts?.map(p => <Post key={p.id} post={p.post} likes={p.likes} id={p.id}/>);
 
     const onClickButtonHandler = (): void => {
-        addPost();
+        dispatch(addPost())
     }
 
     const onChangeTextareaHandler = (e: ChangeEvent<HTMLTextAreaElement>): void => {
         const valuePost = e.currentTarget.value;
-        changeValuePost(valuePost);
+        dispatch(changeValueTextareaPost(valuePost))
     }
 
     return (
         <div className={classes.postsBlock}>
             <h3>My post</h3>
             <div>
-                <textarea onChange={onChangeTextareaHandler} value={profilePage.postText ? profilePage.postText : ''}/>
+                <textarea onChange={onChangeTextareaHandler} value={postText ? postText : ''}/>
                 <div>
                     <button onClick={onClickButtonHandler}>Add post</button>
                 </div>
             </div>
             <div className={classes.posts}>
-                {posts}
+                {mappedPosts}
             </div>
         </div>
     );
-}
+})

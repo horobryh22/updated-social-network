@@ -8,7 +8,7 @@ export type DialogItemType = {
     avatar: string
 }
 
-export const DialogItem: React.FC<DialogItemType> = ({id, name, avatar}) => {
+export const DialogItem: React.FC<DialogItemType> = React.memo(({id, name, avatar}) => {
     return (
         <div className={classes.dialog}>
             <div className={classes.avatar}>
@@ -28,4 +28,4 @@ export const DialogItem: React.FC<DialogItemType> = ({id, name, avatar}) => {
             </div>
         </div>
     )
-}
+});

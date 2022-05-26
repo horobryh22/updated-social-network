@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './ProfileInfo.module.css'
 
-export const ProfileInfo = () => {
+export const ProfileInfo = React.memo(() => {
     return (
         <div>
             <div>
@@ -14,6 +14,6 @@ export const ProfileInfo = () => {
             </div>
         </div>
     );
-};
+});
 
 

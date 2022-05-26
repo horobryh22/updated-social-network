@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './Header.module.css';
 
-export function Header() {
+export const Header = React.memo(() => {
     return (
         <header className={classes.header}>
             <img
@@ -9,4 +9,4 @@ export function Header() {
                 alt=""/>
         </header>
     );
-}
+});

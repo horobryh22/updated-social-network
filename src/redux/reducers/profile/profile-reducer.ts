@@ -1,39 +1,28 @@
 import {PostType} from '../../../components/Profile/MyPosts/Post/Post';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export type ProfilePageType = typeof initialState;
-
-export type ProfileActionsType = ReturnType<typeof addPostActionCreator> | ReturnType<typeof changeValuePostActionCreator>;
-
-const ADD_POST = 'ADD-POST';
-const CHANGE_VALUE_TEXTAREA_POST = 'CHANGE-VALUE-TEXTAREA-POST';
-
 const initialState = {
     posts: [
         {id: 1, post: 'Tell me how are you friends?', likes: 10},
         {id: 2, post: 'Hello, it is my first posts', likes: 15}
     ] as Array<PostType>,
     postText: ''
-}
+};
 
-export const profileReducer = (state: ProfilePageType = initialState, action: ProfileActionsType): ProfilePageType => {
-    switch (action.type) {
-        case ADD_POST:
-            const newPost = {
-                id: 3,
-                post: state.postText,
-                likes: 0
-            }
-            return {...state, posts: [newPost, ...state.posts], postText: ''}
-
-        case CHANGE_VALUE_TEXTAREA_POST:
-            return {...state, postText: action.valuePost}
-
-        default:
-            return state;
+const profileSlice = createSlice({
+    name: 'profile',
+    initialState,
+    reducers: {
+        addPost: (state: ProfilePageType) => {
+            state.posts = [{id: 3, post: state.postText, likes: 0}, ...state.posts];
+            state.postText = '';
+        },
+        changeValueTextareaPost: (state:ProfilePageType, action:PayloadAction<string>) => {
+            state.postText = action.payload;
+        }
     }
-}
+})
 
-export const addPostActionCreator = () => ({type: ADD_POST} as const);
-
-export const changeValuePostActionCreator = (valuePost: string) =>
-    ({type: CHANGE_VALUE_TEXTAREA_POST, valuePost} as const);
+export default profileSlice.reducer;
+export const {addPost, changeValueTextareaPost} = profileSlice.actions;

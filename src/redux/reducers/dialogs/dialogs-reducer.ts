@@ -1,11 +1,8 @@
 import {DialogItemType} from '../../../components/Dialogs/DialogItem/DialogItem';
 import {MessageType} from '../../../components/Dialogs/Message/Message';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export type DialogsPageType = typeof initialState;
-export type DialogsActionsType = ReturnType<typeof sendMessageActionCreator> | ReturnType<typeof changeValueMessageActionCreator>;
-
-const SEND_MESSAGE = 'SEND-MESSAGE';
-const CHANGE_VALUE_TEXTAREA_MESSAGE = 'CHANGE-VALUE-TEXTAREA-MESSAGE';
 
 const initialState = {
     dialogs: [
@@ -49,21 +46,19 @@ const initialState = {
     messageText: ''
 }
 
-export const dialogsReducer = (state: DialogsPageType = initialState, action: DialogsActionsType): DialogsPageType => {
-
-    switch (action.type) {
-        case SEND_MESSAGE:
-            return {...state, messages: [{id: 5, message: state.messageText}, ...state.messages], messageText: ''};
-
-        case CHANGE_VALUE_TEXTAREA_MESSAGE:
-            return {...state, messageText: action.valueMessage}
-
-        default:
-            return state;
+const dialogsSlice = createSlice({
+    name: 'dialogs',
+    initialState,
+    reducers: {
+        sendMessage: (state: DialogsPageType) => {
+            state.messages = [{id: 5, message: state.messageText}, ...state.messages];
+            state.messageText = '';
+        },
+        changeValueTextareaMessage: (state: DialogsPageType, action: PayloadAction<string>) => {
+            state.messageText = action.payload;
+        }
     }
-}
+});
 
-export const sendMessageActionCreator = () => ({type: SEND_MESSAGE} as const);
-
-export const changeValueMessageActionCreator = (valueMessage: string) =>
-    ({type: CHANGE_VALUE_TEXTAREA_MESSAGE, valueMessage} as const);
+export default dialogsSlice.reducer;
+export const {sendMessage, changeValueTextareaMessage} = dialogsSlice.actions

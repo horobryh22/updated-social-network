@@ -2,35 +2,37 @@ import React, {ChangeEvent} from 'react';
 import classes from './Dialogs.module.css';
 import {DialogItem} from './DialogItem/DialogItem';
 import {Message} from './Message/Message';
-import {MapDispatchPropsType, MapStatePropsType} from './DialogsContainer';
+import {useAppDispatch, useTypedSelector} from '../../redux/store';
+import {changeValueTextareaMessage, sendMessage} from '../../redux/reducers/dialogs/dialogs-reducer';
 
-type DialogsType = MapStatePropsType & MapDispatchPropsType;
+export const Dialogs: React.FC = React.memo(() => {
 
-export const Dialogs: React.FC<DialogsType> = ({dialogsPage, changeValueMessage, sendMessage}) => {
+    const dispatch = useAppDispatch();
+    const {dialogs, messages} = useTypedSelector(state => state.dialogsPage);
+    const textareaValue = useTypedSelector(state => state.dialogsPage.messageText);
 
-    const dialogs = dialogsPage.dialogs.map(d => <DialogItem key={d.id} name={d.name} id={d.id} avatar={d.avatar}/>);
-    const messages = dialogsPage.messages.map(m => <Message key={m.id} message={m.message} id={m.id}/>);
-    const textareaValue = dialogsPage.messageText;
+    const mappedDialogs = dialogs.map(d => <DialogItem key={d.id} name={d.name} id={d.id} avatar={d.avatar}/>);
+    const mappedMessages = messages.map(m => <Message key={m.id} message={m.message} id={m.id}/>);
 
     const onClickButtonHandler = (): void => {
-        sendMessage();
+        dispatch(sendMessage());
     }
 
     const onChangeTextareaHandler = (e: ChangeEvent<HTMLTextAreaElement>): void => {
         const valueMessage = e.currentTarget.value;
-        changeValueMessage(valueMessage);
+        dispatch(changeValueTextareaMessage(valueMessage));
     }
 
     return (
         <div className={classes.dialogs}>
             <div className={classes.dialogItems}>
                 <div className={classes.dialogTitle}>Chats</div>
-                {dialogs}
+                {mappedDialogs}
             </div>
             <div className={classes.messages}>
                 <div className={classes.messagesTitle}>Stella Johnson</div>
                 <div className={classes.messagesWrapper}>
-                    {messages}
+                    {mappedMessages}
                 </div>
                 <textarea
                     placeholder={'Enter your message'}
@@ -43,4 +45,4 @@ export const Dialogs: React.FC<DialogsType> = ({dialogsPage, changeValueMessage,
             </div>
         </div>
     )
-}
+});
