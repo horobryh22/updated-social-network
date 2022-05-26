@@ -1,0 +1,14 @@
+.item {
+    color: black;
+}
+
+.item img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.item div img {
+    width: 30px;
+    height: 30px;
+}

@@ -1,0 +1,37 @@
+.dialogs {
+    display: grid;
+    grid-template-columns: 2fr 6fr;
+    height: 500px;
+}
+
+.messages {
+    height: 100%;
+    border: 1px solid white;
+}
+
+.messagesWrapper {
+    height: 400px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    justify-items: flex-start;
+}
+
+.dialogItems {
+    padding: 10px 10px 10px 10px;
+    border: 1px solid white;
+}
+
+.dialogTitle {
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 25px;
+}
+
+.messagesTitle {
+    padding: 10px;
+    font-size: 17px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
