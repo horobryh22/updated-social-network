@@ -33,10 +33,9 @@ const usersSlice = createSlice({
     initialState,
     reducers: {
         changeFollowed: (state: UsersPageType, action: PayloadAction<number>) => {
-            state.users = state.users
-                .map(u => u.id === action.payload
-                    ? {...u, followed: !(state.users.find(el => el.id === action.payload)?.followed)}
-                    : u);
+            state.users.map(u => u.id === action.payload
+                ? u.followed = !u.followed
+                : u);
         },
         changeCurrentPage: (state: UsersPageType, action: PayloadAction<number>) => {
             state.currentPage = action.payload;
@@ -49,7 +48,7 @@ const usersSlice = createSlice({
                 state.usersCount = action.payload.totalCount;
             })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
-               state.error = action.payload;
+                state.error = action.payload;
             })
     }
 });
@@ -58,13 +57,11 @@ const isError = (action: AnyAction) => {
     return action.type.endsWith('rejected')
 }
 
-export const getUsers = createAsyncThunk<DataType, void, { rejectValue: string }>(
+export const getUsers = createAsyncThunk<DataType, void, { rejectValue: string, state: RootState }>(
     'users/getUsers',
     async (_, {rejectWithValue, getState}) => {
 
-        const state = getState() as RootState;
-        const {pageSize, currentPage} = state.users;
-
+        const {pageSize, currentPage} = getState().users;
         const response = await axios.get(`https://social-network.samuraijs.com/api/1.0/users?count=${pageSize}&page=${currentPage}`);
 
         if (response.status !== 200) {

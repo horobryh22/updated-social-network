@@ -15,7 +15,7 @@ const profileSlice = createSlice({
     initialState,
     reducers: {
         addPost: (state: ProfilePageType) => {
-            state.posts = [{id: 3, post: state.postText, likes: 0}, ...state.posts];
+            state.posts.unshift({id: 3, post: state.postText, likes: 0})
             state.postText = '';
         },
         changeValueTextareaPost: (state:ProfilePageType, action:PayloadAction<string>) => {

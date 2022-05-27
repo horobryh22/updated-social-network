@@ -51,7 +51,7 @@ const dialogsSlice = createSlice({
     initialState,
     reducers: {
         sendMessage: (state: DialogsPageType) => {
-            state.messages = [{id: 5, message: state.messageText}, ...state.messages];
+            state.messages.unshift({id: 5, message: state.messageText});
             state.messageText = '';
         },
         changeValueTextareaMessage: (state: DialogsPageType, action: PayloadAction<string>) => {
