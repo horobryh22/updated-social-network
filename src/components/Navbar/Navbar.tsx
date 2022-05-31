@@ -8,7 +8,7 @@ export const Navbar: React.FC = React.memo(() => {
 
     const {navbar} = useTypedSelector(state => state);
 
-    const mappedNavbar = navbar.map((navElement, i) => (
+    const mappedNavbar = navbar.map((navElement) => (
         <div key={navElement.id} className={classes.item}>
             <NavLink
                 to={`${navElement.to}`}

@@ -4,4 +4,22 @@
 
 .descriptionBlock {
     padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.imageContainer {
+    height: 300px;
+    width: 300px;
+    margin-right: 50px;
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+}
+
+.userDataContainer {
+    display: flex;
+    flex-direction: column;
 }

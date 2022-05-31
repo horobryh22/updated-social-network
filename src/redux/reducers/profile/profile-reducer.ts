@@ -1,13 +1,40 @@
 import {PostType} from '../../../components/Profile/MyPosts/Post/Post';
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import axios from 'axios';
 
+export type PhotosUserType = {
+    small: null | string
+    large: null | string
+}
+export type ContactsUserType = {
+    facebook: string | null
+    website: string | null
+    vk: string | null
+    twitter: string | null
+    instagram: string | null
+    youtube: string | null
+    github: string | null
+    mainLink: string | null
+}
+export type UserProfileType = {
+    aboutMe: string | null
+    contacts: ContactsUserType
+    lookingForAJob: boolean
+    lookingForAJobDescription: string | null
+    fullName: string | null
+    userId: number,
+    photos: PhotosUserType
+}
 export type ProfilePageType = typeof initialState;
+
 const initialState = {
     posts: [
         {id: 1, post: 'Tell me how are you friends?', likes: 10},
         {id: 2, post: 'Hello, it is my first posts', likes: 15}
     ] as Array<PostType>,
-    postText: ''
+    postText: '',
+    userProfile: {} as UserProfileType,
+    isFetching: false
 };
 
 const profileSlice = createSlice({
@@ -21,8 +48,33 @@ const profileSlice = createSlice({
         changeValueTextareaPost: (state:ProfilePageType, action:PayloadAction<string>) => {
             state.postText = action.payload;
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(setUserProfile.fulfilled, (state, action) => {
+                state.userProfile = action.payload;
+                state.isFetching = false;
+            })
+            .addCase(setUserProfile.pending, (state) => {
+                state.isFetching = true;
+            })
     }
+
 })
+
+export const setUserProfile = createAsyncThunk<UserProfileType, string, { rejectValue: string}>(
+    'profile/setUserProfile',
+    async (id, {rejectWithValue}) => {
+
+        const response = await axios.get(`https://social-network.samuraijs.com/api/1.0/profile/${id}`);
+
+        if (response.status !== 200) {
+            return rejectWithValue('Can\'t get tasks. Server error');
+        }
+
+        return response.data as UserProfileType;
+    }
+)
 
 export default profileSlice.reducer;
 export const {addPost, changeValueTextareaPost} = profileSlice.actions;

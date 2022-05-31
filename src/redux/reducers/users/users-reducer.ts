@@ -1,20 +1,17 @@
 import {AnyAction, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {RootState} from '../../store';
+import {PhotosUserType} from '../profile/profile-reducer';
 
 type DataType = {
     error: null | string
     items: Array<UsersTestType>
     totalCount: number
 }
-type PhotosType = {
-    small: null | string
-    large: null | string
-}
 export type UsersTestType = {
     name: string
     id: number
-    photos: PhotosType
+    photos: PhotosUserType
     status: null | string
     followed: boolean
 }
@@ -25,7 +22,8 @@ const initialState = {
     pageSize: 5,
     usersCount: 0,
     currentPage: 1,
-    error: ''
+    error: '',
+    isFetching: false
 }
 
 const usersSlice = createSlice({
@@ -46,6 +44,10 @@ const usersSlice = createSlice({
             .addCase(getUsers.fulfilled, (state, action) => {
                 state.users = action.payload.items;
                 state.usersCount = action.payload.totalCount;
+                state.isFetching = false;
+            })
+            .addCase(getUsers.pending, (state) => {
+                state.isFetching = true;
             })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
                 state.error = action.payload;
@@ -54,7 +56,7 @@ const usersSlice = createSlice({
 });
 
 const isError = (action: AnyAction) => {
-    return action.type.endsWith('rejected')
+    return action.type.endsWith('rejected');
 }
 
 export const getUsers = createAsyncThunk<DataType, void, { rejectValue: string, state: RootState }>(

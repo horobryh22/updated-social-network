@@ -3,11 +3,11 @@ import {ProfileInfo} from './ProfileInfo/ProfileInfo';
 import {MyPosts} from './MyPosts/MyPosts';
 
 
-export const Profile = () => {
+export const Profile = React.memo(() => {
     return (
         <div>
             <ProfileInfo/>
             <MyPosts/>
         </div>
     );
-}
+})

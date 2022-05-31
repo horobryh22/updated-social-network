@@ -1,7 +1,24 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import classes from './ProfileInfo.module.css'
+import {useAppDispatch, useTypedSelector} from '../../../redux/hooks/hooks';
+import {useParams} from 'react-router-dom';
+import {setUserProfile} from '../../../redux/reducers/profile/profile-reducer';
+import {Preloader} from '../../common/Preloader/Preloader';
+import avatar from '../../../assets/images/default-avatar.jpeg'
 
 export const ProfileInfo = React.memo(() => {
+    const {id} = useParams();
+
+    const dispatch = useAppDispatch();
+    const {isFetching, userProfile} = useTypedSelector(state => state.profile);
+
+    useEffect(() => {
+        if (id) {
+            dispatch(setUserProfile(id));
+        }
+    }, [dispatch, id]);
+
+
     return (
         <div>
             <div>
@@ -10,7 +27,16 @@ export const ProfileInfo = React.memo(() => {
                      alt=""/>
             </div>
             <div className={classes.descriptionBlock}>
-                ava + descr
+                {isFetching
+                    ? <Preloader/>
+                    : <>
+                        <div className={classes.imageContainer}><img src={userProfile.photos?.large ? userProfile.photos.large : avatar} alt=""/></div>
+                        <div className={classes.userDataContainer}>
+                            <h2>{userProfile.fullName}</h2>
+                            <span>{userProfile.aboutMe}</span>
+                        </div>
+                    </>
+                }
             </div>
         </div>
     );
