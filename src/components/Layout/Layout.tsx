@@ -4,7 +4,7 @@ import {Header} from '../Header/Header';
 import {Navbar} from '../Navbar/Navbar';
 import '../../App.css';
 
-export const Layout = () => {
+export const Layout = React.memo(() => {
     return (
         <>
             <Header/>
@@ -14,4 +14,4 @@ export const Layout = () => {
             </div>
         </>
     );
-};
+});

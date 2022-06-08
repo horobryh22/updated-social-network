@@ -1,14 +1,19 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import classes from './Users.module.css';
 import avatar from '../../assets/images/default-avatar.jpeg'
-import {changeCurrentPage, changeFollowed, getUsers,} from '../../redux/reducers/users/users-reducer';
+import {
+    addUserToFriends,
+    changeCurrentPage,
+    getUsers,
+    removeUserFromFriends,
+} from '../../redux/reducers/users/users-reducer';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import {Preloader} from '../common/Preloader/Preloader';
 import {NavLink} from 'react-router-dom';
 
 
 export const Users: React.FC = React.memo(() => {
-
+    
     const dispatch = useAppDispatch();
     const {users, usersCount, pageSize, currentPage, isFetching} = useTypedSelector(state => state.users);
 
@@ -16,10 +21,10 @@ export const Users: React.FC = React.memo(() => {
         dispatch(getUsers());
     }, [dispatch]);
 
-    const onClickHandler = (p: number) => {
+    const onClickHandler = useCallback((p: number) => {
         dispatch(changeCurrentPage(p));
         dispatch(getUsers());
-    }
+    }, [dispatch])
 
     const pagesCount = Math.ceil(usersCount / pageSize);
     const pages = [];
@@ -46,7 +51,13 @@ export const Users: React.FC = React.memo(() => {
                         <img src={u.photos.small ? u.photos.small : avatar} alt="avatar"/>
                     </NavLink>
                     <button
-                        onClick={() => dispatch(changeFollowed(u.id))}
+                        onClick={() => {
+                            if (!u.followed) {
+                                dispatch(addUserToFriends(u.id));
+                            } else {
+                                dispatch(removeUserFromFriends(u.id))
+                            }
+                        } }
                     >{u.followed ? 'Unfollowed' : 'Followed'}</button>
                 </div>
                 <div className={classes.rightBox}>

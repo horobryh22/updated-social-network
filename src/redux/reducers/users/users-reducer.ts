@@ -1,7 +1,7 @@
 import {AnyAction, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import axios from 'axios';
 import {RootState} from '../../store';
 import {PhotosUserType} from '../profile/profile-reducer';
+import {instance, ResponseDataType} from '../auth/auth-reducer';
 
 type DataType = {
     error: null | string
@@ -23,18 +23,14 @@ const initialState = {
     usersCount: 0,
     currentPage: 1,
     error: '',
-    isFetching: false
+    isFetching: false,
+    isChangingFollowStatus: [] as Array<number>
 }
 
 const usersSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        changeFollowed: (state: UsersPageType, action: PayloadAction<number>) => {
-            state.users.map(u => u.id === action.payload
-                ? u.followed = !u.followed
-                : u);
-        },
         changeCurrentPage: (state: UsersPageType, action: PayloadAction<number>) => {
             state.currentPage = action.payload;
         }
@@ -48,6 +44,20 @@ const usersSlice = createSlice({
             })
             .addCase(getUsers.pending, (state) => {
                 state.isFetching = true;
+            })
+            .addCase(addUserToFriends.fulfilled, (state, action) => {
+                if (!action.payload.data.resultCode) {
+                    state.users.map(u => u.id === action.payload.id
+                        ? u.followed = !u.followed
+                        : u);
+                }
+            })
+            .addCase(removeUserFromFriends.fulfilled, (state, action) => {
+                if (!action.payload.data.resultCode) {
+                    state.users.map(u => u.id === action.payload.id
+                        ? u.followed = !u.followed
+                        : u);
+                }
             })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
                 state.error = action.payload;
@@ -64,15 +74,34 @@ export const getUsers = createAsyncThunk<DataType, void, { rejectValue: string, 
     async (_, {rejectWithValue, getState}) => {
 
         const {pageSize, currentPage} = getState().users;
-        const response = await axios.get(`https://social-network.samuraijs.com/api/1.0/users?count=${pageSize}&page=${currentPage}`);
 
-        if (response.status !== 200) {
-            return rejectWithValue('Can\'t get tasks. Server error');
-        }
+        const response = await instance.get(`users`, {
+            params: {
+                count: pageSize,
+                page: currentPage
+            }
+        });
 
-        return response.data as DataType;
+        return response.data;
     }
 )
 
+export const addUserToFriends = createAsyncThunk<{ data: ResponseDataType, id: number }, number, { rejectValue: string }>(
+    'users/addUserToFriends',
+    async (id, {rejectWithValue}) => {
+        const response = await instance.post(`/follow/${id}`);
+        return {data: response.data, id}
+    }
+);
+
+export const removeUserFromFriends = createAsyncThunk<{ data: ResponseDataType, id: number }, number, { rejectValue: string }>(
+    'users/removeUserFromFriends',
+    async (id, {rejectWithValue}) => {
+        const response = await instance.delete(`/follow/${id}`)
+        return {data: response.data, id}
+    }
+);
+
+
 export default usersSlice.reducer;
-export const {changeFollowed, changeCurrentPage} = usersSlice.actions;
+export const {changeCurrentPage} = usersSlice.actions;

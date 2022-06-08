@@ -7,17 +7,17 @@ import {Preloader} from '../../common/Preloader/Preloader';
 import avatar from '../../../assets/images/default-avatar.jpeg'
 
 export const ProfileInfo = React.memo(() => {
-    const {id} = useParams();
 
     const dispatch = useAppDispatch();
     const {isFetching, userProfile} = useTypedSelector(state => state.profile);
 
-    useEffect(() => {
-        if (id) {
-            dispatch(setUserProfile(id));
-        }
-    }, [dispatch, id]);
+    const {id: idParam} = useParams();
+    const currentAuthUserId = useTypedSelector(state => state.auth.currentAuthUser.userId);
+    const id = (idParam) ? idParam : (currentAuthUserId) ? currentAuthUserId.toString() : '24040';
 
+    useEffect(() => {
+        dispatch(setUserProfile(id));
+    }, [dispatch, id]);
 
     return (
         <div>
@@ -30,7 +30,8 @@ export const ProfileInfo = React.memo(() => {
                 {isFetching
                     ? <Preloader/>
                     : <>
-                        <div className={classes.imageContainer}><img src={userProfile.photos?.large ? userProfile.photos.large : avatar} alt=""/></div>
+                        <div className={classes.imageContainer}><img
+                            src={userProfile.photos?.large ? userProfile.photos.large : avatar} alt=""/></div>
                         <div className={classes.userDataContainer}>
                             <h2>{userProfile.fullName}</h2>
                             <span>{userProfile.aboutMe}</span>
