@@ -7,9 +7,9 @@ export type PostType = {
     likes: number
 }
 
-export const Post: React.FC<PostType> = React.memo(({post, likes, id}) => {
+export const Post: React.FC<PostType> = React.memo(({post, likes}) => {
     return (
-        <div key={id} className={classes.item}>
+        <div className={classes.item}>
             <img src="http://archilab.online/images/1/123.jpg" alt=""/>
             {post}
             <div>

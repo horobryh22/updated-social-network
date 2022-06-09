@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useCallback} from 'react';
 import classes from './MyPosts.module.css';
 import {Post} from './Post/Post';
 import {addPost, changeValueTextareaPost} from '../../../redux/reducers/profile/profile-reducer';
@@ -8,17 +8,16 @@ export const MyPosts: React.FC = React.memo(() => {
 
     const dispatch = useAppDispatch();
     const {posts, postText} = useTypedSelector(state => state.profile)
-
     const mappedPosts = posts?.map(p => <Post key={p.id} post={p.post} likes={p.likes} id={p.id}/>);
 
-    const onClickButtonHandler = (): void => {
+    const onClickButtonHandler = useCallback((): void => {
         dispatch(addPost())
-    }
+    },[])
 
-    const onChangeTextareaHandler = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    const onChangeTextareaHandler = useCallback((e: ChangeEvent<HTMLTextAreaElement>): void => {
         const valuePost = e.currentTarget.value;
         dispatch(changeValueTextareaPost(valuePost))
-    }
+    }, [])
 
     return (
         <div className={classes.postsBlock}>

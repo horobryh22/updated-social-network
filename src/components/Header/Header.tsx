@@ -3,7 +3,7 @@ import classes from './Header.module.css';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import {NavLink} from 'react-router-dom';
 import avatar from '../../assets/images/default-avatar.jpeg'
-import {becomeAuthUser, getUserProfile} from '../../redux/reducers/auth/auth-reducer';
+import {becomeAuthUser, getAuthUserProfile} from '../../redux/thunks/thunks';
 
 export const Header = React.memo(() => {
 
@@ -11,12 +11,10 @@ export const Header = React.memo(() => {
     const id = useTypedSelector(state => state.auth.userData.id);
     const dispatch = useAppDispatch();
 
-    console.log('Header');
-
     useEffect(() => { // как здесь правильно ползоваться useEffect, можно ли делать подряд 2 диспатча?
         dispatch(becomeAuthUser());
         if (id) {
-            dispatch(getUserProfile(id));
+            dispatch(getAuthUserProfile(id));
         }
     }, [dispatch, id])
 

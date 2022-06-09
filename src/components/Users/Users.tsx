@@ -1,77 +1,50 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import classes from './Users.module.css';
-import avatar from '../../assets/images/default-avatar.jpeg'
-import {
-    addUserToFriends,
-    changeCurrentPage,
-    getUsers,
-    removeUserFromFriends,
-} from '../../redux/reducers/users/users-reducer';
+import {changeCurrentPage,} from '../../redux/reducers/users/users-reducer';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import {Preloader} from '../common/Preloader/Preloader';
-import {NavLink} from 'react-router-dom';
+import {getUsers} from '../../redux/thunks/thunks';
+import {User} from './User';
 
 
 export const Users: React.FC = React.memo(() => {
-    
+
     const dispatch = useAppDispatch();
-    const {users, usersCount, pageSize, currentPage, isFetching} = useTypedSelector(state => state.users);
+    const {users, usersCount, pageSize, currentPage, isFetching,} = useTypedSelector(state => state.users);
 
     useEffect(() => {
         dispatch(getUsers());
-    }, [dispatch]);
+    }, []);
 
     const onClickHandler = useCallback((p: number) => {
         dispatch(changeCurrentPage(p));
         dispatch(getUsers());
     }, [dispatch])
 
-    const pagesCount = Math.ceil(usersCount / pageSize);
-    const pages = [];
 
-    for (let i = 0; i < pagesCount; i++) {
-        pages[i] = i + 1
-    }
+    const mappedPages = useMemo(() => {
+        const pagesCount = Math.ceil(usersCount / pageSize);
+        const pages = [];
 
-    const mappedPages = pages.map((p, i)=> {
-        return (
-            <div
-                key={i}
-                className={currentPage === p ? classes.activeNumberPage : classes.numberPage}
-                onClick={() => onClickHandler(p)}
-            >{p}</div>
-        )
-    });
+        for (let i = 0; i < pagesCount; i++) {
+            pages[i] = i + 1
+        }
+
+        return pages.map((p, i) => {
+            return (
+                <div
+                    key={i}
+                    className={currentPage === p ? classes.activeNumberPage : classes.numberPage}
+                    onClick={() => onClickHandler(p)}
+                >{p}</div>
+            )
+        });
+    }, [currentPage, pageSize, usersCount])
 
     const mappedUsers = users.map(u => {
         return (
-            <div key={u.id} className={classes.userBox}>
-                <div className={classes.leftBox}>
-                    <NavLink to={`/profile/${u.id}`}>
-                        <img src={u.photos.small ? u.photos.small : avatar} alt="avatar"/>
-                    </NavLink>
-                    <button
-                        onClick={() => {
-                            if (!u.followed) {
-                                dispatch(addUserToFriends(u.id));
-                            } else {
-                                dispatch(removeUserFromFriends(u.id))
-                            }
-                        } }
-                    >{u.followed ? 'Unfollowed' : 'Followed'}</button>
-                </div>
-                <div className={classes.rightBox}>
-                    <div className={classes.topRightBox}>
-                        <div>{u.name}</div>
-                        <div>
-                            {/*{`${u.location.country}, ${u.location.city}`}*/}
-                        </div>
-                    </div>
-                    <div className={classes.bottomRightBox}>
-                        {u.status}
-                    </div>
-                </div>
-            </div>
+            <User key={u.id} userId={u.id} photo={u.photos.small} followed={u.followed} name={u.name}
+                  status={u.status}/>
         )
     })
 
@@ -84,4 +57,6 @@ export const Users: React.FC = React.memo(() => {
         </div>
     )
 });
+
+
 

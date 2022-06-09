@@ -1,6 +1,6 @@
 import {PostType} from '../../../components/Profile/MyPosts/Post/Post';
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import axios from 'axios';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {setUserProfile} from '../../thunks/thunks';
 
 export type PhotosUserType = {
     small: null | string
@@ -61,20 +61,6 @@ const profileSlice = createSlice({
     }
 
 })
-
-export const setUserProfile = createAsyncThunk<UserProfileType, string, { rejectValue: string}>(
-    'profile/setUserProfile',
-    async (id, {rejectWithValue}) => {
-
-        const response = await axios.get(`https://social-network.samuraijs.com/api/1.0/profile/${id}`);
-
-        if (response.status !== 200) {
-            return rejectWithValue('Can\'t get tasks. Server error');
-        }
-
-        return response.data as UserProfileType;
-    }
-)
 
 export default profileSlice.reducer;
 export const {addPost, changeValueTextareaPost} = profileSlice.actions;

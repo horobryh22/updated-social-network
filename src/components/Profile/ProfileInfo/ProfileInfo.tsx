@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import classes from './ProfileInfo.module.css'
 import {useAppDispatch, useTypedSelector} from '../../../redux/hooks/hooks';
 import {useParams} from 'react-router-dom';
-import {setUserProfile} from '../../../redux/reducers/profile/profile-reducer';
 import {Preloader} from '../../common/Preloader/Preloader';
 import avatar from '../../../assets/images/default-avatar.jpeg'
+import {setUserProfile} from '../../../redux/thunks/thunks';
 
 export const ProfileInfo = React.memo(() => {
 

@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useCallback} from 'react';
 import classes from './Dialogs.module.css';
 import {DialogItem} from './DialogItem/DialogItem';
 import {Message} from './Message/Message';
@@ -14,14 +14,14 @@ export const Dialogs: React.FC = React.memo(() => {
     const mappedDialogs = dialogs.map(d => <DialogItem key={d.id} name={d.name} id={d.id} avatar={d.avatar}/>);
     const mappedMessages = messages.map(m => <Message key={m.id} message={m.message} id={m.id}/>);
 
-    const onClickButtonHandler = (): void => {
+    const onClickButtonHandler = useCallback((): void => {
         dispatch(sendMessage());
-    }
+    }, [])
 
-    const onChangeTextareaHandler = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    const onChangeTextareaHandler = useCallback((e: ChangeEvent<HTMLTextAreaElement>): void => {
         const valueMessage = e.currentTarget.value;
         dispatch(changeValueTextareaMessage(valueMessage));
-    }
+    }, [])
 
     return (
         <div className={classes.dialogs}>

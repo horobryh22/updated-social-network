@@ -8,6 +8,6 @@ export type MessageType = {
 
 export const Message: React.FC<MessageType> = React.memo(({message, id}) => {
     return (
-        <div key={id} className={classes.message}>{message}</div>
+        <div className={classes.message}>{message}</div>
     )
 });

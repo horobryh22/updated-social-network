@@ -1,6 +1,6 @@
 import {UserProfileType} from '../profile/profile-reducer';
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import axios from 'axios';
+import {createSlice} from '@reduxjs/toolkit';
+import {becomeAuthUser, getAuthUserProfile} from '../../thunks/thunks';
 
 export type AuthUserStateType = typeof initialState;
 export type AuthUserDataType = {
@@ -32,42 +32,13 @@ const authSlice = createSlice({
                 state.userData = action.payload.data
                 state.isAuth = true;
             })
-            .addCase(getUserProfile.fulfilled, (state:AuthUserStateType, action) => {
+            .addCase(getAuthUserProfile.fulfilled, (state:AuthUserStateType, action) => {
                 state.currentAuthUser = action.payload;
             })
-            .addCase(getUserProfile.pending, (state) => {
+            .addCase(getAuthUserProfile.pending, (state) => {
 
             })
-
     }
 })
-
-export const instance = axios.create({
-    baseURL: 'https://social-network.samuraijs.com/api/1.0/',
-    withCredentials: true,
-    headers: {
-        'API-KEY': 'd73ac9ac-03b0-4f3d-b9fd-ef31da93967f'
-    }
-})
-
-export const becomeAuthUser = createAsyncThunk<ResponseDataType, void, { rejectValue: string }>(
-    'auth/becomeAuthUser',
-    async (_, {rejectWithValue}) => {
-
-        const response = await instance.get(`auth/me`);
-
-        return response.data;
-    }
-);
-
-export const getUserProfile = createAsyncThunk<UserProfileType, number, { rejectValue: string }>(
-    'auth/getUserProfile',
-    async (id, {rejectWithValue}) => {
-
-        const response = await instance.get(`profile/${id}`);
-
-        return response.data;
-    }
-);
 
 export default authSlice.reducer;
