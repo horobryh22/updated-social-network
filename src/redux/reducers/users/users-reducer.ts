@@ -1,6 +1,6 @@
-import {AnyAction, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {PhotosUserType} from '../profile/profile-reducer';
-import {changeUserFollowStatus, getUsers} from '../../thunks/thunks';
+import {changeUserFollowStatus, getUsers, isError} from '../../thunks/thunks';
 
 export type UsersTestType = {
     name: string
@@ -47,18 +47,13 @@ const usersSlice = createSlice({
                         ? {...u, followed: !u.followed}
                         : u);
                 }
-                console.log(state.users)
                 state.isChangingFollowStatus = state.isChangingFollowStatus.filter(id => id !== action.payload.id);
             })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
-                // state.error = action.payload;
+                console.log(action.payload);
             })
     }
 });
-
-const isError = (action: AnyAction) => {
-    return action.type.endsWith('rejected');
-}
 
 export default usersSlice.reducer;
 export const {changeCurrentPage, addIdToChangingFollowStatusArray} = usersSlice.actions;

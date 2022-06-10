@@ -21,7 +21,6 @@ export const Users: React.FC = React.memo(() => {
         dispatch(getUsers());
     }, [dispatch])
 
-
     const mappedPages = useMemo(() => {
         const pagesCount = Math.ceil(usersCount / pageSize);
         const pages = [];

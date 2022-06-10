@@ -1,6 +1,6 @@
 import {PostType} from '../../../components/Profile/MyPosts/Post/Post';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {setUserProfile} from '../../thunks/thunks';
+import {isError, setUserProfile} from '../../thunks/thunks';
 
 export type PhotosUserType = {
     small: null | string
@@ -45,7 +45,7 @@ const profileSlice = createSlice({
             state.posts.unshift({id: 3, post: state.postText, likes: 0})
             state.postText = '';
         },
-        changeValueTextareaPost: (state:ProfilePageType, action:PayloadAction<string>) => {
+        changeValueTextareaPost: (state: ProfilePageType, action: PayloadAction<string>) => {
             state.postText = action.payload;
         }
     },
@@ -58,8 +58,10 @@ const profileSlice = createSlice({
             .addCase(setUserProfile.pending, (state) => {
                 state.isFetching = true;
             })
+            .addMatcher(isError, (state, action: PayloadAction<string>) => {
+                console.log(action.payload);
+            })
     }
-
 })
 
 export default profileSlice.reducer;

@@ -1,6 +1,6 @@
 import {UserProfileType} from '../profile/profile-reducer';
-import {createSlice} from '@reduxjs/toolkit';
-import {becomeAuthUser, getAuthUserProfile} from '../../thunks/thunks';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {becomeAuthUser, getAuthUserProfile, isError} from '../../thunks/thunks';
 
 export type AuthUserStateType = typeof initialState;
 export type AuthUserDataType = {
@@ -28,15 +28,15 @@ const authSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(becomeAuthUser.fulfilled, (state:AuthUserStateType, action) => {
+            .addCase(becomeAuthUser.fulfilled, (state, action) => {
                 state.userData = action.payload.data
                 state.isAuth = true;
             })
-            .addCase(getAuthUserProfile.fulfilled, (state:AuthUserStateType, action) => {
+            .addCase(getAuthUserProfile.fulfilled, (state, action) => {
                 state.currentAuthUser = action.payload;
             })
-            .addCase(getAuthUserProfile.pending, (state) => {
-
+            .addMatcher(isError, (state, action: PayloadAction<string>) => {
+                console.log(action.payload);
             })
     }
 })
