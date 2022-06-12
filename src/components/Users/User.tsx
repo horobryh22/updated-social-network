@@ -3,8 +3,7 @@ import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import classes from './Users.module.css';
 import {NavLink} from 'react-router-dom';
 import avatar from '../../assets/images/default-avatar.jpeg';
-import {addIdToChangingFollowStatusArray} from '../../redux/reducers/users/users-reducer';
-import {changeUserFollowStatus} from '../../redux/thunks/thunks';
+import {changeUserFollowStatus} from '../../redux/reducers/users/users-reducer';
 
 type UserPropsType = {
     userId: number
@@ -16,16 +15,10 @@ type UserPropsType = {
 export const User: React.FC<UserPropsType> = React.memo(({userId, photo, followed, name, status}) => {
 
     const dispatch = useAppDispatch();
-
     const isChangingFollowStatus = useTypedSelector(state => state.users.isChangingFollowStatus);
 
     const onClickHandler = useCallback(() => {
-        dispatch(addIdToChangingFollowStatusArray(userId))
-        if (!followed) {
-            dispatch(changeUserFollowStatus({id: userId, action: 'post'}));
-        } else {
-            dispatch(changeUserFollowStatus({id: userId, action: 'delete'}));
-        }
+        dispatch(changeUserFollowStatus({id: userId, followed}))
     }, [followed, userId])
 
     return (

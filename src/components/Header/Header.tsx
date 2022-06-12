@@ -3,20 +3,16 @@ import classes from './Header.module.css';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import {NavLink} from 'react-router-dom';
 import avatar from '../../assets/images/default-avatar.jpeg'
-import {becomeAuthUser, getAuthUserProfile} from '../../redux/thunks/thunks';
+import {loginMe} from '../../redux/reducers/auth/auth-reducer';
 
 export const Header = React.memo(() => {
 
-    const {currentAuthUser, isAuth} = useTypedSelector(state => state.auth);
-    const id = useTypedSelector(state => state.auth.userData.id);
+    const {isAuth, currentAuthUserData} = useTypedSelector(state => state.auth);
     const dispatch = useAppDispatch();
 
-    useEffect(() => { // как здесь правильно ползоваться useEffect, можно ли делать подряд 2 диспатча?
-        dispatch(becomeAuthUser());
-        if (id) {
-            dispatch(getAuthUserProfile(id));
-        }
-    }, [dispatch, id])
+    useEffect(() => {
+        dispatch(loginMe());
+    }, [dispatch])
 
     return (
         <header className={classes.header}>
@@ -25,8 +21,8 @@ export const Header = React.memo(() => {
                 alt="logo"/>
             {isAuth
                 ? <div className={classes.userDataBlock}>
-                    <div className={classes.userName}>{currentAuthUser.fullName}</div>
-                    <img src={currentAuthUser.photos?.small ? currentAuthUser.photos.small : avatar} alt=""/>
+                    <div className={classes.userName}>{currentAuthUserData.fullName}</div>
+                    <img src={currentAuthUserData.photos?.small ? currentAuthUserData.photos.small : avatar} alt=""/>
                 </div>
                 : <div className={classes.loginBlock}>
                     <NavLink to={'/login'}>LogIn</NavLink>

@@ -1,6 +1,7 @@
 import {PostType} from '../../../components/Profile/MyPosts/Post/Post';
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {isError, setUserProfile} from '../../thunks/thunks';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {usersAPI} from '../../../api/api';
+import {isError} from '../users/users-reducer';
 
 export type PhotosUserType = {
     small: null | string
@@ -62,7 +63,20 @@ const profileSlice = createSlice({
                 console.log(action.payload);
             })
     }
-})
+});
+
+
+export const setUserProfile = createAsyncThunk<UserProfileType, string, { rejectValue: string }>(
+    'profile/setUserProfile',
+    async (id, {rejectWithValue}) => {
+        try {
+            return usersAPI.getUserProfile(Number(id));
+        } catch (e) {
+            const err = e as Error;
+            return rejectWithValue('setUserProfile: ' + err.message);
+        }
+    }
+);
 
 export default profileSlice.reducer;
 export const {addPost, changeValueTextareaPost} = profileSlice.actions;

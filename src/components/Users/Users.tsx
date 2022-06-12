@@ -1,9 +1,8 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import classes from './Users.module.css';
-import {changeCurrentPage,} from '../../redux/reducers/users/users-reducer';
+import {getUsers,} from '../../redux/reducers/users/users-reducer';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import {Preloader} from '../common/Preloader/Preloader';
-import {getUsers} from '../../redux/thunks/thunks';
 import {User} from './User';
 
 
@@ -13,12 +12,11 @@ export const Users: React.FC = React.memo(() => {
     const {users, usersCount, pageSize, currentPage, isFetching,} = useTypedSelector(state => state.users);
 
     useEffect(() => {
-        dispatch(getUsers());
-    }, []);
+        dispatch(getUsers(1));
+    }, [dispatch]);
 
     const onClickHandler = useCallback((p: number) => {
-        dispatch(changeCurrentPage(p));
-        dispatch(getUsers());
+        dispatch(getUsers(p));
     }, [dispatch])
 
     const mappedPages = useMemo(() => {

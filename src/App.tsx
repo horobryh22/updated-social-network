@@ -5,6 +5,7 @@ import {Route, Routes} from 'react-router-dom';
 import {Dialogs} from './components/Dialogs/Dialogs';
 import {Users} from './components/Users/Users';
 import {Layout} from './components/Layout/Layout';
+import {Login} from './components/Login/Login';
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
                     <Route path="profile/:id" element={<Profile/>}/>
                     <Route path="dialogs" element={<Dialogs/>}/>
                     <Route path="users" element={<Users/>}/>
+                    <Route path="login" element={<Login/>}/>
                     {/*<Route path='/news' element={News}/>*/}
                     {/*<Route path='/music' element={Music}/>*/}
                     {/*<Route path='/settings' element={Settings}/>*/}

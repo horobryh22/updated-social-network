@@ -1,6 +1,7 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {AnyAction, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {PhotosUserType} from '../profile/profile-reducer';
-import {changeUserFollowStatus, getUsers, isError} from '../../thunks/thunks';
+import {DataType, usersAPI} from '../../../api/api';
+import {RootState} from '../../store';
 
 export type UsersTestType = {
     name: string
@@ -42,11 +43,10 @@ const usersSlice = createSlice({
                 state.isFetching = true;
             })
             .addCase(changeUserFollowStatus.fulfilled, (state, action) => {
-                if (!action.payload.data.resultCode) {
-                    state.users = state.users.map(u => u.id === action.payload.id
-                        ? {...u, followed: !u.followed}
-                        : u);
-                }
+                state.users = state.users.map(u => u.id === action.payload.id
+                    ? {...u, followed: action.payload.followed}
+                    : u)
+
                 state.isChangingFollowStatus = state.isChangingFollowStatus.filter(id => id !== action.payload.id);
             })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
@@ -54,6 +54,51 @@ const usersSlice = createSlice({
             })
     }
 });
+
+
+export const getUsers = createAsyncThunk<DataType, number, { state: RootState, rejectValue: string }>(
+    'users/getUsers',
+    async (page, {getState, rejectWithValue, dispatch}) => {
+        try {
+            dispatch(changeCurrentPage(page));
+            return await usersAPI.getUsers(5, page);
+        } catch (e) {
+            const err = e as Error;
+            return rejectWithValue('getUsers: ' + err.message);
+        }
+    }
+)
+
+
+type changeUserFollowIncomingDataType = {
+    id: number
+    followed: boolean
+}
+
+type changeUserFollowReturnValueType = {
+    id: number
+    followed: boolean
+}
+
+export const changeUserFollowStatus = createAsyncThunk<changeUserFollowReturnValueType, changeUserFollowIncomingDataType>(
+    'users/changeUserFollowStatus',
+    async ({id, followed}, {rejectWithValue, dispatch}) => {
+        dispatch(addIdToChangingFollowStatusArray(id));
+
+        if (!followed) {
+            const data = await usersAPI.changeFollowStatus(id, 'post');
+            return (!data.resultCode) ? {id, followed: true} : rejectWithValue('User was not added to friends');
+
+        } else {
+            const data = await usersAPI.changeFollowStatus(id, 'delete');
+            return (!data.resultCode) ? {id, followed: false} : rejectWithValue('User was not added to friends');
+        }
+    }
+);
+
+export const isError = (action: AnyAction) => {
+    return action.type.endsWith('rejected');
+}
 
 export default usersSlice.reducer;
 export const {changeCurrentPage, addIdToChangingFollowStatusArray} = usersSlice.actions;

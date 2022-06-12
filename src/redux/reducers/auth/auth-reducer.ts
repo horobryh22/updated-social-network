@@ -1,24 +1,16 @@
 import {UserProfileType} from '../profile/profile-reducer';
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {becomeAuthUser, getAuthUserProfile, isError} from '../../thunks/thunks';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {authAPI, usersAPI} from '../../../api/api';
+import {isError} from '../users/users-reducer';
 
-export type AuthUserStateType = typeof initialState;
 export type AuthUserDataType = {
     id: number
     email: string
     login: string
 };
 
-export type ResponseDataType = {
-    data: AuthUserDataType
-    fieldsErrors: Array<any>
-    messages: Array<any>
-    resultCode: number
-}
-
 const initialState = {
-    userData: {} as AuthUserDataType,
-    currentAuthUser: {} as UserProfileType,
+    currentAuthUserData: {} as UserProfileType,
     isAuth: false
 }
 
@@ -28,17 +20,27 @@ const authSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(becomeAuthUser.fulfilled, (state, action) => {
-                state.userData = action.payload.data
+            .addCase(loginMe.fulfilled, (state, action) => {
+                state.currentAuthUserData = action.payload
                 state.isAuth = true;
-            })
-            .addCase(getAuthUserProfile.fulfilled, (state, action) => {
-                state.currentAuthUser = action.payload;
             })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
                 console.log(action.payload);
             })
     }
-})
+});
+
+export const loginMe = createAsyncThunk<UserProfileType, void, {rejectValue: string}>(
+    'auth/becomeAuthUser',
+    async (_, {rejectWithValue}) => {
+        try {
+            const data = await authAPI.becomeAuthUser();
+            return await usersAPI.getUserProfile(data.data.id);
+        } catch (e) {
+            const err = e as Error;
+            return rejectWithValue('becomeAuthUser: ' + err.message);
+        }
+    }
+);
 
 export default authSlice.reducer;

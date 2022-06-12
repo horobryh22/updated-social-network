@@ -4,7 +4,8 @@ import {useAppDispatch, useTypedSelector} from '../../../redux/hooks/hooks';
 import {useParams} from 'react-router-dom';
 import {Preloader} from '../../common/Preloader/Preloader';
 import avatar from '../../../assets/images/default-avatar.jpeg'
-import {setUserProfile} from '../../../redux/thunks/thunks';
+import {setUserProfile} from '../../../redux/reducers/profile/profile-reducer';
+
 
 export const ProfileInfo = React.memo(() => {
 
@@ -12,7 +13,7 @@ export const ProfileInfo = React.memo(() => {
     const {isFetching, userProfile} = useTypedSelector(state => state.profile);
 
     const {id: idParam} = useParams();
-    const currentAuthUserId = useTypedSelector(state => state.auth.currentAuthUser.userId);
+    const currentAuthUserId = useTypedSelector(state => state.auth.currentAuthUserData.userId);
     const id = (idParam) ? idParam : (currentAuthUserId) ? currentAuthUserId.toString() : '24040';
 
     useEffect(() => {
