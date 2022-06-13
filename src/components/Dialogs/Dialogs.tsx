@@ -4,12 +4,12 @@ import {DialogItem} from './DialogItem/DialogItem';
 import {Message} from './Message/Message';
 import {changeValueTextareaMessage, sendMessage} from '../../redux/reducers/dialogs/dialogs-reducer';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
-import {Navigate} from 'react-router-dom';
+import {compose} from '@reduxjs/toolkit';
+import {withAuthRedirect} from '../../hoc/withAuthRedirect';
 
-export const Dialogs: React.FC = React.memo(() => {
+const Dialogs: React.FC = React.memo(() => {
 
     const dispatch = useAppDispatch();
-    const {isAuth} = useTypedSelector(state => state.auth);
     const {dialogs, messages} = useTypedSelector(state => state.dialogs);
     const textareaValue = useTypedSelector(state => state.dialogs.messageText);
 
@@ -25,9 +25,7 @@ export const Dialogs: React.FC = React.memo(() => {
         dispatch(changeValueTextareaMessage(valueMessage));
     }, [])
 
-    return (!isAuth)
-        ? <Navigate to={'/login'}/>
-        :  (
+    return (
         <div className={classes.dialogs}>
             <div className={classes.dialogItems}>
                 <div className={classes.dialogTitle}>Chats</div>
@@ -50,3 +48,5 @@ export const Dialogs: React.FC = React.memo(() => {
         </div>
     )
 });
+
+export default React.memo(compose<React.ComponentType>(withAuthRedirect)(Dialogs));

@@ -1,20 +1,17 @@
-import React from 'react';
+import React, {ComponentType} from 'react';
 import {ProfileInfo} from './ProfileInfo/ProfileInfo';
 import {MyPosts} from './MyPosts/MyPosts';
-import {useTypedSelector} from '../../redux/hooks/hooks';
-import {Navigate} from 'react-router-dom';
+import {compose} from '@reduxjs/toolkit';
+import {withAuthRedirect} from '../../hoc/withAuthRedirect';
 
+const Profile = React.memo(() => {
 
-export const Profile = React.memo(() => {
-
-    const {isAuth} = useTypedSelector(state => state.auth);
-
-    return (!isAuth)
-        ? <Navigate to={'/login'}/>
-        : (
+    return (
             <div>
                 <ProfileInfo/>
                 <MyPosts/>
             </div>
         );
-})
+});
+
+export default React.memo(compose<ComponentType>(withAuthRedirect)(Profile));

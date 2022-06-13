@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import {Profile} from './components/Profile/Profile';
+import Profile from './components/Profile/Profile';
 import {Route, Routes} from 'react-router-dom';
-import {Dialogs} from './components/Dialogs/Dialogs';
-import {Users} from './components/Users/Users';
+import Dialogs from './components/Dialogs/Dialogs';
+import Users from './components/Users/Users';
 import {Layout} from './components/Layout/Layout';
 import {Login} from './components/Login/Login';
 

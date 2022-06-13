@@ -4,9 +4,11 @@ import {getUsers,} from '../../redux/reducers/users/users-reducer';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import {Preloader} from '../common/Preloader/Preloader';
 import {User} from './User';
+import {compose} from '@reduxjs/toolkit';
+import {withAuthRedirect} from '../../hoc/withAuthRedirect';
 
 
-export const Users: React.FC = React.memo(() => {
+const Users: React.FC = React.memo(() => {
 
     const dispatch = useAppDispatch();
     const {users, usersCount, pageSize, currentPage, isFetching,} = useTypedSelector(state => state.users);
@@ -55,5 +57,4 @@ export const Users: React.FC = React.memo(() => {
     )
 });
 
-
-
+export default React.memo(compose(withAuthRedirect)(Users));
