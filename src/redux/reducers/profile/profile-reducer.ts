@@ -1,6 +1,6 @@
 import {PostType} from '../../../components/Profile/MyPosts/Post/Post';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {usersAPI} from '../../../api/api';
+import {profileAPI} from '../../../api/api';
 import {isError} from '../users/users-reducer';
 
 export type PhotosUserType = {
@@ -35,7 +35,8 @@ const initialState = {
     ] as Array<PostType>,
     postText: '',
     userProfile: {} as UserProfileType,
-    isFetching: false
+    isFetching: false,
+    status: ''
 };
 
 const profileSlice = createSlice({
@@ -59,6 +60,12 @@ const profileSlice = createSlice({
             .addCase(setUserProfile.pending, (state) => {
                 state.isFetching = true;
             })
+            .addCase(setUserStatus.fulfilled, (state, action) => {
+                state.status = action.payload;
+            })
+            .addCase(updateUserStatus.fulfilled, (state, action) => {
+                state.status = action.payload;
+            })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
                 console.log(action.payload);
             })
@@ -70,13 +77,32 @@ export const setUserProfile = createAsyncThunk<UserProfileType, string, { reject
     'profile/setUserProfile',
     async (id, {rejectWithValue}) => {
         try {
-            return usersAPI.getUserProfile(Number(id));
+            return profileAPI.getUserProfile(Number(id));
         } catch (e) {
             const err = e as Error;
             return rejectWithValue('setUserProfile: ' + err.message);
         }
     }
 );
+
+export const setUserStatus = createAsyncThunk<string, string>(
+    'profile/getUserStatus',
+    async (id, {rejectWithValue}) => {
+        try {
+            return await profileAPI.getUserStatus(id);
+        } catch (e) {
+            const err = e as Error;
+            return rejectWithValue('setUserStatus: ' + err.message);
+        }
+    })
+
+export const updateUserStatus = createAsyncThunk<string, string>(
+    'profile/updateUserStatus',
+    async (status, {rejectWithValue}) => {
+        const response = await profileAPI.updateUserStatus(status);
+        return (!response.resultCode) ? status : rejectWithValue("user status didn't update");
+    }
+)
 
 export default profileSlice.reducer;
 export const {addPost, changeValueTextareaPost} = profileSlice.actions;

@@ -4,7 +4,8 @@ import {useAppDispatch, useTypedSelector} from '../../../redux/hooks/hooks';
 import {useParams} from 'react-router-dom';
 import {Preloader} from '../../common/Preloader/Preloader';
 import avatar from '../../../assets/images/default-avatar.jpeg'
-import {setUserProfile} from '../../../redux/reducers/profile/profile-reducer';
+import {setUserProfile, setUserStatus} from '../../../redux/reducers/profile/profile-reducer';
+import {ProfileStatus} from './ProfileStatus/ProfileStatus';
 
 
 export const ProfileInfo = React.memo(() => {
@@ -18,6 +19,7 @@ export const ProfileInfo = React.memo(() => {
 
     useEffect(() => {
         dispatch(setUserProfile(id));
+        dispatch(setUserStatus(id));
     }, [dispatch, id]);
 
     return (
@@ -36,6 +38,7 @@ export const ProfileInfo = React.memo(() => {
                         <div className={classes.userDataContainer}>
                             <h2>{userProfile.fullName}</h2>
                             <span>{userProfile.aboutMe}</span>
+                            <ProfileStatus/>
                         </div>
                     </>
                 }

@@ -1,6 +1,6 @@
 import {AnyAction, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {PhotosUserType} from '../profile/profile-reducer';
-import {DataType, usersAPI} from '../../../api/api';
+import {DataType, profileAPI, usersAPI} from '../../../api/api';
 import {RootState} from '../../store';
 
 export type UsersTestType = {
@@ -86,11 +86,11 @@ export const changeUserFollowStatus = createAsyncThunk<changeUserFollowReturnVal
         dispatch(addIdToChangingFollowStatusArray(id));
 
         if (!followed) {
-            const data = await usersAPI.changeFollowStatus(id, 'post');
+            const data = await profileAPI.changeFollowStatus(id, 'post');
             return (!data.resultCode) ? {id, followed: true} : rejectWithValue('User was not added to friends');
 
         } else {
-            const data = await usersAPI.changeFollowStatus(id, 'delete');
+            const data = await profileAPI.changeFollowStatus(id, 'delete');
             return (!data.resultCode) ? {id, followed: false} : rejectWithValue('User was not added to friends');
         }
     }

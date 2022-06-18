@@ -43,6 +43,25 @@ export const authAPI = {
     }
 }
 
+export const profileAPI = {
+    getUserProfile: async (id: number): Promise<UserProfileType> => {
+        const response = await instance.get(`profile/${id}`);
+        return response.data;
+    },
+    changeFollowStatus: async (id: number, requestType: RequestType): Promise<ResponseDataType> => {
+        const response = await instance[requestType](`/follow/${id}`)
+        return response.data;
+    },
+    getUserStatus: async (id: string): Promise<string> => {
+        const response = await instance.get(`/profile/status/${id}`);
+        return response.data;
+    },
+    updateUserStatus: async (status: string): Promise<ResponseDataType> => {
+        const response = await instance.put(`/profile/status`, {status: status});
+        return response.data;
+    },
+}
+
 export const usersAPI = {
     getUsers: async (pageSize: number, currentPage: number): Promise<DataType> => {
         const response = await instance.get(`users`, {
@@ -51,14 +70,6 @@ export const usersAPI = {
                 page: currentPage
             }
         });
-        return response.data;
-    },
-    getUserProfile: async (id: number): Promise<UserProfileType> => {
-        const response = await instance.get(`profile/${id}`);
-        return response.data;
-    },
-    changeFollowStatus: async (id: number, requestType: RequestType): Promise<ResponseDataType> => {
-        const response = await instance[requestType](`/follow/${id}`)
         return response.data;
     }
 }

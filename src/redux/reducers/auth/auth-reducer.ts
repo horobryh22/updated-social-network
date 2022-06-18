@@ -1,6 +1,6 @@
 import {UserProfileType} from '../profile/profile-reducer';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {authAPI, usersAPI} from '../../../api/api';
+import {authAPI, profileAPI} from '../../../api/api';
 import {isError} from '../users/users-reducer';
 
 export type AuthUserDataType = {
@@ -35,7 +35,7 @@ export const loginMe = createAsyncThunk<UserProfileType, void, {rejectValue: str
     async (_, {rejectWithValue}) => {
         try {
             const data = await authAPI.becomeAuthUser();
-            return await usersAPI.getUserProfile(data.data.id);
+            return await profileAPI.getUserProfile(data.data.id);
         } catch (e) {
             const err = e as Error;
             return rejectWithValue('becomeAuthUser: ' + err.message);

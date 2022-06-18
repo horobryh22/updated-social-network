@@ -14,4 +14,7 @@ const Profile = React.memo(() => {
         );
 });
 
-export default React.memo(compose<ComponentType>(withAuthRedirect)(Profile));
+export default React.memo(compose<ComponentType>(
+    withAuthRedirect
+)
+(Profile));
