@@ -1,18 +1,19 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import classes from './Header.module.css';
 import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
 import {NavLink} from 'react-router-dom';
 import avatar from '../../assets/images/default-avatar.jpeg'
-import {loginMe} from '../../redux/reducers/auth/auth-reducer';
+import {logOut} from '../../redux/reducers/auth/auth-reducer';
 
 export const Header = React.memo(() => {
 
     const {isAuth, currentAuthUserData} = useTypedSelector(state => state.auth);
+
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(loginMe());
-    }, [dispatch])
+    const onClickHandler = () => {
+        dispatch(logOut())
+    }
 
     return (
         <header className={classes.header}>
@@ -23,6 +24,9 @@ export const Header = React.memo(() => {
                 ? <div className={classes.userDataBlock}>
                     <div className={classes.userName}>{currentAuthUserData.fullName}</div>
                     <img src={currentAuthUserData.photos?.small ? currentAuthUserData.photos.small : avatar} alt=""/>
+                    <div className={classes.loginBlock}>
+                        <NavLink to={'/login'} onClick={onClickHandler}>LogOut</NavLink>
+                    </div>
                 </div>
                 : <div className={classes.loginBlock}>
                     <NavLink to={'/login'}>LogIn</NavLink>

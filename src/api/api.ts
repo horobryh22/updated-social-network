@@ -37,8 +37,12 @@ const instance = axios.create({
 })
 
 export const authAPI = {
-    becomeAuthUser: async (): Promise<ResponseDataType> => {
-        const response = await instance.get(`auth/me`);
+    logIn: async (email: string, password: string, rememberMe: boolean): Promise<ResponseDataType> => {
+        const response = await instance.post(`auth/login`, {email, password, rememberMe});
+        return response.data;
+    },
+    logOut: async (): Promise<ResponseDataType> => {
+        const response = await instance.delete(`auth/login`);
         return response.data;
     }
 }

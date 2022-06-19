@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import classes from './ProfileStatus.module.css';
 import {useAppDispatch, useTypedSelector} from '../../../../redux/hooks/hooks';
 import {updateUserStatus} from '../../../../redux/reducers/profile/profile-reducer';
@@ -10,7 +10,12 @@ export const ProfileStatus = React.memo(() => {
     const status = useTypedSelector(state => state.profile.status);
 
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [statusValue, setStatusValue] = useState<string>(status);
+    const [statusValue, setStatusValue] = useState<string>("");
+
+    useEffect(() => {
+        setStatusValue(status);
+    },[status])
+
 
     const toggleEditMode = () => {
         setEditMode(!editMode);
