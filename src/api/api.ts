@@ -1,19 +1,17 @@
 import axios from 'axios';
+import {UserDataType} from '../redux/reducers/users/users-reducer';
 import {ContactsUserType, PhotosUserType} from '../redux/reducers/profile/profile-reducer';
-import {AuthUserDataType} from '../redux/reducers/auth/auth-reducer';
-import {UsersTestType} from '../redux/reducers/users/users-reducer';
 
 export type RequestType = 'post' | 'delete';
 
-export type DataType = {
+export type GetUsersResponseType = {
     error: null | string
-    items: Array<UsersTestType>
+    items: Array<UserDataType>
     totalCount: number
 }
 
-export type ResponseDataType = {
-    data: AuthUserDataType
-    fieldsErrors: Array<any>
+export type ResponseType<D = {}> = {
+    data: D
     messages: Array<any>
     resultCode: number
 }
@@ -37,38 +35,42 @@ const instance = axios.create({
 })
 
 export const authAPI = {
-    logIn: async (email: string, password: string, rememberMe: boolean): Promise<ResponseDataType> => {
-        const response = await instance.post(`auth/login`, {email, password, rememberMe});
+    logIn: async (email: string, password: string, rememberMe: boolean) => {
+        const response = await instance.post<ResponseType<{ userId: number }>>(`auth/login`, {
+            email,
+            password,
+            rememberMe
+        });
         return response.data;
     },
-    logOut: async (): Promise<ResponseDataType> => {
-        const response = await instance.delete(`auth/login`);
+    logOut: async () => {
+        const response = await instance.delete<ResponseType>(`auth/login`);
         return response.data;
     }
 }
 
 export const profileAPI = {
-    getUserProfile: async (id: number): Promise<UserProfileType> => {
-        const response = await instance.get(`profile/${id}`);
+    getUserProfile: async (id: number) => {
+        const response = await instance.get<UserProfileType>(`profile/${id}`);
         return response.data;
     },
-    changeFollowStatus: async (id: number, requestType: RequestType): Promise<ResponseDataType> => {
-        const response = await instance[requestType](`/follow/${id}`)
+    changeFollowStatus: async (id: number, requestType: RequestType) => {
+        const response = await instance[requestType]<ResponseType>(`follow/${id}`)
         return response.data;
     },
-    getUserStatus: async (id: string): Promise<string> => {
-        const response = await instance.get(`/profile/status/${id}`);
+    getUserStatus: async (id: string) => {
+        const response = await instance.get<string>(`profile/status/${id}`);
         return response.data;
     },
-    updateUserStatus: async (status: string): Promise<ResponseDataType> => {
-        const response = await instance.put(`/profile/status`, {status: status});
+    updateUserStatus: async (status: string) => {
+        const response = await instance.put<ResponseType>(`profile/status`, {status: status});
         return response.data;
     },
 }
 
 export const usersAPI = {
-    getUsers: async (pageSize: number, currentPage: number): Promise<DataType> => {
-        const response = await instance.get(`users`, {
+    getUsers: async (pageSize: number, currentPage: number) => {
+        const response = await instance.get<GetUsersResponseType>(`users`, {
             params: {
                 count: pageSize,
                 page: currentPage

@@ -1,19 +1,20 @@
 import {AnyAction, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {PhotosUserType} from '../profile/profile-reducer';
-import {DataType, profileAPI, usersAPI} from '../../../api/api';
+import {GetUsersResponseType, profileAPI, usersAPI} from '../../../api/api';
 import {RootState} from '../../store';
 
-export type UsersTestType = {
+export type UserDataType = {
     name: string
     id: number
     photos: PhotosUserType
     status: null | string
     followed: boolean
 }
+
 export type UsersPageType = typeof initialState;
 
 const initialState = {
-    users: [] as Array<UsersTestType>,
+    users: [] as Array<UserDataType>,
     pageSize: 5,
     usersCount: 0,
     currentPage: 1,
@@ -56,7 +57,7 @@ const usersSlice = createSlice({
 });
 
 
-export const getUsers = createAsyncThunk<DataType, number, { state: RootState, rejectValue: string }>(
+export const getUsers = createAsyncThunk<GetUsersResponseType, number, { state: RootState, rejectValue: string }>(
     'users/getUsers',
     async (page, {getState, rejectWithValue, dispatch}) => {
         try {

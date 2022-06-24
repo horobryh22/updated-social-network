@@ -1,15 +1,8 @@
 import {UserProfileType} from '../profile/profile-reducer';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {isError} from '../users/users-reducer';
-import {authAPI, profileAPI, ResponseDataType} from '../../../api/api';
+import {authAPI, profileAPI, ResponseType} from '../../../api/api';
 import {FormValuesType} from '../../../components/Login/LoginForm/LoginForm';
-
-export type AuthUserDataType = {
-    id: number
-    email: string
-    login: string
-    userId: number
-};
 
 const initialState = {
     currentAuthUserData: {} as UserProfileType,
@@ -54,7 +47,7 @@ export const logIn = createAsyncThunk<UserProfileType, FormValuesType, { rejectV
     }
 );
 
-export const logOut = createAsyncThunk<ResponseDataType, void, { rejectValue: string }>(
+export const logOut = createAsyncThunk<ResponseType, void, { rejectValue: string }>(
     'auth/logout',
     async (_, {rejectWithValue}) => {
         try {
