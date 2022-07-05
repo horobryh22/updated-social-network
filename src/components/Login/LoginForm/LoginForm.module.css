@@ -15,3 +15,12 @@
 .form label {
     font-weight: 600;
 }
+
+.errorForm {
+    border: 2px solid red;
+    outline:none;
+}
+
+.errorMessage {
+    color: red;
+}

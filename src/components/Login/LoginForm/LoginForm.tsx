@@ -1,22 +1,29 @@
 import React from 'react';
-import {Field, Form, Formik} from 'formik';
+import {ErrorMessage, Field, Form, Formik} from 'formik';
 import classes from './LoginForm.module.css'
 import {useAppDispatch} from '../../../redux/hooks/hooks';
 import {logIn} from '../../../redux/reducers/auth/auth-reducer';
-
+import * as Yup from 'yup';
 
 export type FormValuesType = {
-    login: string
+    email: string
     password: string
     rememberMe: boolean
 }
+
+const SingUpSchema = Yup.object().shape({
+    email: Yup.string().email().required('Email is required'),
+    password: Yup.string()
+        .required('Password is required')
+        .min(6, 'Password is too short - should be 6 chars minimum')
+});
 
 export const LoginForm = React.memo(() => {
 
     const dispatch = useAppDispatch();
 
     const initialValues: FormValuesType = {
-        login: '',
+        email: '',
         password: '',
         rememberMe: false,
     }
@@ -24,24 +31,39 @@ export const LoginForm = React.memo(() => {
     return (
         <Formik
             initialValues={initialValues}
-            onSubmit={(values: FormValuesType) => {
-                dispatch(logIn(values))
+            onSubmit={(values: FormValuesType, {setSubmitting}) => {
+                dispatch(logIn(values));
             }}
+            validationSchema={SingUpSchema}
         >
-            <Form className={classes.form}>
-                <label htmlFor="login">Login</label>
-                <Field id="login" name="login" placeholder="Your login"/>
+            {({errors, touched, isSubmitting}) => (
+                <Form className={classes.form}>
+                    <label htmlFor="email">Email</label>
+                    <Field
+                        id="email"
+                        name="email"
+                        placeholder="Your email"
+                        className={`${errors.email && touched.email ? classes.errorForm : null}`}
+                    />
+                    <ErrorMessage name="email" component="div" className={classes.errorMessage}/>
 
-                <label htmlFor="password">Password</label>
-                <Field id="password" name="password" placeholder="Your password"/>
+                    <label htmlFor="password">Password</label>
+                    <Field
+                        id="password"
+                        name="password"
+                        placeholder="Your password"
+                        type="password"
+                        className={`${errors.password && touched.password ? classes.errorForm : null}`}
+                    />
+                    <ErrorMessage name="password" component="div" className={classes.errorMessage}/>
 
-                <label>
-                    <Field type="checkbox" name="rememberMe"/>
-                    Remember Me
-                </label>
-
-                <button type="submit">Submit</button>
-            </Form>
+                    <label>
+                        <Field type="checkbox" name="rememberMe"/>
+                        Remember Me
+                    </label>
+                    <button type="submit" disabled={isSubmitting}>Submit</button>
+                </Form>
+            )}
         </Formik>
     );
 })

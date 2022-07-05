@@ -42,23 +42,18 @@ const initialState = {
         {id: 2, message: 'How are you?'},
         {id: 3, message: 'Nice to meet you'},
         {id: 4, message: 'Where are you from?'}
-    ] as Array<MessageType>,
-    messageText: ''
+    ] as Array<MessageType>
 }
 
 const dialogsSlice = createSlice({
     name: 'dialogs',
     initialState,
     reducers: {
-        sendMessage: (state: DialogsPageType) => {
-            state.messages.unshift({id: 5, message: state.messageText});
-            state.messageText = '';
-        },
-        changeValueTextareaMessage: (state: DialogsPageType, action: PayloadAction<string>) => {
-            state.messageText = action.payload;
+        sendMessage: (state: DialogsPageType, action: PayloadAction<string>) => {
+            state.messages.unshift({id: 5, message: action.payload});
         }
     }
 });
 
 export default dialogsSlice.reducer;
-export const {sendMessage, changeValueTextareaMessage} = dialogsSlice.actions
+export const {sendMessage} = dialogsSlice.actions;

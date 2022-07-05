@@ -1,29 +1,18 @@
-import React, {ChangeEvent, useCallback} from 'react';
+import React from 'react';
 import classes from './Dialogs.module.css';
 import {DialogItem} from './DialogItem/DialogItem';
 import {Message} from './Message/Message';
-import {changeValueTextareaMessage, sendMessage} from '../../redux/reducers/dialogs/dialogs-reducer';
-import {useAppDispatch, useTypedSelector} from '../../redux/hooks/hooks';
+import {useTypedSelector} from '../../redux/hooks/hooks';
 import {compose} from '@reduxjs/toolkit';
 import {withAuthRedirect} from '../../hoc/withAuthRedirect';
+import {AddMessageForm} from './AddMessageForm/AddMessageForm';
 
 const Dialogs: React.FC = React.memo(() => {
 
-    const dispatch = useAppDispatch();
     const {dialogs, messages} = useTypedSelector(state => state.dialogs);
-    const textareaValue = useTypedSelector(state => state.dialogs.messageText);
 
     const mappedDialogs = dialogs.map(d => <DialogItem key={d.id} name={d.name} id={d.id} avatar={d.avatar}/>);
     const mappedMessages = messages.map(m => <Message key={m.id} message={m.message} id={m.id}/>);
-
-    const onClickButtonHandler = useCallback((): void => {
-        dispatch(sendMessage());
-    }, [])
-
-    const onChangeTextareaHandler = useCallback((e: ChangeEvent<HTMLTextAreaElement>): void => {
-        const valueMessage = e.currentTarget.value;
-        dispatch(changeValueTextareaMessage(valueMessage));
-    }, [])
 
     return (
         <div className={classes.dialogs}>
@@ -36,14 +25,7 @@ const Dialogs: React.FC = React.memo(() => {
                 <div className={classes.messagesWrapper}>
                     {mappedMessages}
                 </div>
-                <textarea
-                    placeholder={'Enter your message'}
-                    onChange={onChangeTextareaHandler}
-                    value={textareaValue}
-                />
-                <div>
-                    <button onClick={onClickButtonHandler}>Send Message</button>
-                </div>
+                <AddMessageForm/>
             </div>
         </div>
     )

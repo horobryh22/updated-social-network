@@ -14,8 +14,8 @@ export const ProfileInfo = React.memo(() => {
     const {isFetching, userProfile} = useTypedSelector(state => state.profile);
 
     const {id: idParam} = useParams();
-    const currentAuthUserId = useTypedSelector(state => state.auth.currentAuthUserData.userId);
-    const id = (idParam) ? idParam : (currentAuthUserId) ? currentAuthUserId.toString() : '24040';
+    const currentAuthUserId = useTypedSelector(state => state.auth.authUserData.id);
+    const id = (idParam) ? idParam : currentAuthUserId.toString();
 
     useEffect(() => {
         dispatch(setUserProfile(id));

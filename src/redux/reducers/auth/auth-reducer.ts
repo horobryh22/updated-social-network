@@ -1,12 +1,19 @@
 import {UserProfileType} from '../profile/profile-reducer';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {isError} from '../users/users-reducer';
-import {authAPI, profileAPI, ResponseType} from '../../../api/api';
+import {authAPI, AuthUserDataType, profileAPI, ResponseType} from '../../../api/api';
 import {FormValuesType} from '../../../components/Login/LoginForm/LoginForm';
 
-const initialState = {
-    currentAuthUserData: {} as UserProfileType,
-    isAuth: false
+type AuthStateType = {
+    isAuth: boolean
+    authUserData: AuthUserDataType
+    authUserProfile: UserProfileType
+}
+
+const initialState: AuthStateType = {
+    isAuth: false,
+    authUserData: {} as AuthUserDataType,
+    authUserProfile: {} as UserProfileType
 }
 
 const authSlice = createSlice({
@@ -15,12 +22,15 @@ const authSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(logIn.fulfilled, (state, action) => {
-                state.currentAuthUserData = action.payload
+            .addCase(me.fulfilled, (state, action) => {
+                state.authUserProfile = action.payload.authUserProfile;
+                state.authUserData = action.payload.authUserData;
                 state.isAuth = true;
             })
             .addCase(logOut.fulfilled, (state, action) => {
                 if (!action.payload.resultCode) {
+                    state.authUserProfile = {} as UserProfileType;
+                    state.authUserData = {} as AuthUserDataType;
                     state.isAuth = false;
                 }
             })
@@ -30,15 +40,40 @@ const authSlice = createSlice({
     }
 });
 
-export const logIn = createAsyncThunk<UserProfileType, FormValuesType, { rejectValue: string }>(
-    'auth/login',
-    async ({login, password, rememberMe}, {rejectWithValue}) => {
+type ResponseMeThunkType = {
+    authUserData: AuthUserDataType
+    authUserProfile: UserProfileType
+}
+
+export const me = createAsyncThunk<ResponseMeThunkType, void, { rejectValue: string }>(
+    'auth/me',
+    async (_, {rejectWithValue}) => {
         try {
-            const response = await authAPI.logIn(login, password, rememberMe);
-            if (!response.resultCode) {
-                return await profileAPI.getUserProfile(response.data.userId);
+            const data = await authAPI.me();
+            if (!data.resultCode) {
+                const userData = data.data;
+                const profile = await profileAPI.getUserProfile(userData.id);
+                return {authUserData: userData, authUserProfile: profile};
             } else {
-                throw new Error('Login error');
+                throw new Error('You are not authorized');
+            }
+        } catch (e) {
+            const err = e as Error;
+            return rejectWithValue('me: ' + err.message);
+        }
+    }
+);
+
+
+export const logIn = createAsyncThunk<void, FormValuesType, { rejectValue: string }>(
+    'auth/login',
+    async ({email, password, rememberMe}, {rejectWithValue, dispatch}) => {
+        try {
+            const response = await authAPI.logIn(email, password, rememberMe);
+            if (!response.resultCode) {
+                dispatch(me());
+            } else {
+                throw new Error (response.messages[0]);
             }
         } catch (e) {
             const err = e as Error;
