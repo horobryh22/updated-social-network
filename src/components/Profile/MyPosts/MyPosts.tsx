@@ -2,7 +2,8 @@ import React from 'react';
 import classes from './MyPosts.module.css';
 import {Post} from './Post/Post';
 import {useTypedSelector} from '../../../redux/hooks/hooks';
-import {AddPostForm} from './AddPostForm/AddPostForm';
+import {AddTextForm} from '../../common/AddTextForm/AddTextForm';
+import {addPost} from '../../../redux/reducers/profile/profile-reducer';
 
 export const MyPosts: React.FC = React.memo(() => {
 
@@ -12,7 +13,7 @@ export const MyPosts: React.FC = React.memo(() => {
     return (
         <div className={classes.postsBlock}>
             <h3>My post</h3>
-            <AddPostForm/>
+            <AddTextForm name={'Add post'} callback={addPost}/>
             <div className={classes.posts}>
                 {mappedPosts}
             </div>

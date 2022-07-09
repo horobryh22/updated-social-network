@@ -5,7 +5,8 @@ import {Message} from './Message/Message';
 import {useTypedSelector} from '../../redux/hooks/hooks';
 import {compose} from '@reduxjs/toolkit';
 import {withAuthRedirect} from '../../hoc/withAuthRedirect';
-import {AddMessageForm} from './AddMessageForm/AddMessageForm';
+import {AddTextForm} from '../common/AddTextForm/AddTextForm';
+import {sendMessage} from '../../redux/reducers/dialogs/dialogs-reducer';
 
 const Dialogs: React.FC = React.memo(() => {
 
@@ -25,7 +26,7 @@ const Dialogs: React.FC = React.memo(() => {
                 <div className={classes.messagesWrapper}>
                     {mappedMessages}
                 </div>
-                <AddMessageForm/>
+                <AddTextForm name={'Send message'} callback={sendMessage}/>
             </div>
         </div>
     )

@@ -5,12 +5,14 @@ import {authAPI, AuthUserDataType, profileAPI, ResponseType} from '../../../api/
 import {FormValuesType} from '../../../components/Login/LoginForm/LoginForm';
 
 type AuthStateType = {
+    error: string | null
     isAuth: boolean
     authUserData: AuthUserDataType
     authUserProfile: UserProfileType
 }
 
 const initialState: AuthStateType = {
+    error: '',
     isAuth: false,
     authUserData: {} as AuthUserDataType,
     authUserProfile: {} as UserProfileType
@@ -19,7 +21,11 @@ const initialState: AuthStateType = {
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
+    reducers: {
+        setAuthError: (state: AuthStateType, action: PayloadAction<string | null>) => {
+            state.error = action.payload;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(me.fulfilled, (state, action) => {
@@ -72,12 +78,14 @@ export const logIn = createAsyncThunk<void, FormValuesType, { rejectValue: strin
             const response = await authAPI.logIn(email, password, rememberMe);
             if (!response.resultCode) {
                 dispatch(me());
+                dispatch(setAuthError(null));
             } else {
                 throw new Error (response.messages[0]);
             }
         } catch (e) {
             const err = e as Error;
-            return rejectWithValue('login: ' + err.message);
+            dispatch(setAuthError(err.message));
+            return rejectWithValue(err.message);
         }
     }
 );
@@ -95,3 +103,4 @@ export const logOut = createAsyncThunk<ResponseType, void, { rejectValue: string
 );
 
 export default authSlice.reducer;
+export const {setAuthError} = authSlice.actions;
