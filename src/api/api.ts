@@ -40,6 +40,8 @@ const instance = axios.create({
     }
 })
 
+
+//нужно ли делать try catch в этом кейсе, когда я не сразу вовзращаю промис, а возвращаю его результат?
 export const authAPI = {
     me: async (): Promise<ResponseType<AuthUserDataType>> => {
         const response = await instance.get(`auth/me`);
